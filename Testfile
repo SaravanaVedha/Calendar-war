@@ -1,11 +1,18 @@
 pipeline {
-    agent any
-
+  environment {
+    dockerImage = ''
+  }
+    agent any 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'DocJen', url: 'git@github.com:PravinBalaji/Calendar-war.git']]])
+        stage('checkout') { 
+            steps{
+                git credentialsId: 'DocJen', url: 'git@github.com:PravinBalaji/Calendar-war.git'
             }
         }
-    }
+        stage('Build code') { 
+            steps{
+              sh "mvn clean install" 
+              }
+            }
+        }
 }
