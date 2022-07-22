@@ -1,18 +1,20 @@
 pipeline {
-  environment {
-    dockerImage = ''
-  }
     agent any 
     stages {
-        stage('checkout') { 
-            steps{
-                git credentialsId: 'DocJen', url: 'git@github.com:PravinBalaji/Calendar-war.git'
+        stage('Checkout') { 
+            steps {
+                // 
             }
         }
-        stage('Build code') { 
-            steps{
-              sh "mvn clean install" 
-              }
+        stage('build') { 
+            steps {
+                echo 'Build the test' 
             }
         }
+        stage('Deploy') { 
+            steps {
+                echo 'Deploy the code'
+            }
+        }
+    }
 }
