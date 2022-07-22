@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') { 
             steps {
-                // 
+                git credentialsId: 'DocJen', url: 'git@github.com:PravinBalaji/Calendar-war.git' 
             }
         }
         stage('build') { 
