@@ -1,11 +1,43 @@
-pipeline {
-    agent any 
-    stages {
-        stage('checkout') { 
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: '0584edd4-6d77-4b79-b877-f016c35c5ec8', url: 'https://github.com/SaravanaVedha/Calendar-war.git']]])
-            }
+node {
+   def mvnHome = tool 'M2_HOME'
 
-        }
-    }
+   stage('Checkout Code') { 
+      git 'https://github.com/SaravanaVedha/Calendar-war.git'
+   }
+   stage('JUnit Test') {
+      if (isUnix()) {
+         sh "'${mvnHome}/bin/mvn' clean test"
+      } else {
+         bat(/"${mvnHome}\bin\mvn" clean test/)
+      }
+   }
+   stage('Integration Test') {
+      if (isUnix()) {
+         sh "'${mvnHome}/bin/mvn' integration-test"
+      } else {
+         bat(/"${mvnHome}\bin\mvn" integration-test/)
+      }
+   }
+ /*
+   stage('Performance Test') {
+      if (isUnix()) {
+         sh "'${mvnHome}/bin/mvn' cargo:start verify cargo:stop"
+      } else {
+         bat(/"${mvnHome}\bin\mvn" cargo:start verify cargo:stop/)
+      }
+   }
+  */
+  stage('Performance Test') {
+      if (isUnix()) {
+         sh "'${mvnHome}/bin/mvn' verify"
+      } else {
+         bat(/"${mvnHome}\bin\mvn" verify/)
+      }
+   }
+   stage('Deploy') {
+      timeout(time: 10, unit: 'MINUTES') {
+           input message: 'Deploy this web app to production ?'
+      }
+      echo 'Deploy...'
+   }
 }
